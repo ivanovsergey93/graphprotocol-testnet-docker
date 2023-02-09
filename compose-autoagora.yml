@@ -14,10 +14,6 @@ networks:
 volumes:
     postgres2_data: {}
     postgres_agora_data: {}
-    nginx_certs: {}
-    nginx_vhost: {}
-    nginx_html: {}
-    nginx_acme: {}
     rabbitmq_etc: {}
     rabbitmq_data: {}
 
@@ -30,7 +26,7 @@ services:
 
   indexer-service:
     image: ${INDEXER_SERVICE_VERSION:-kwetlesen/autoagora-indexer-service:latest}
-    container_name: indexer-service
+    container_name: indexer-service-testnet
     depends_on:
       - postgres2
       - rabbitmq
@@ -78,7 +74,7 @@ services:
 
   rabbitmq:
     image: rabbitmq:3.9.25
-    container_name: rabbitmq
+    container_name: rabbitmq-testnet
     volumes:
       - rabbitmq_etc:/etc/rabbitmq/
       - rabbitmq_data:/var/lib/rabbitmq/
@@ -98,7 +94,7 @@ services:
 
   ag-processor:
     image: kwetlesen/autoagora-processor:latest
-    container_name: ag-processor
+    container_name: ag-processor-testnet
     volumes:
       - ./postgres-socket:/var/run/postgresql
     depends_on:
@@ -131,7 +127,7 @@ services:
 
   ag:
     image: kwetlesen/autoagora:latest
-    container_name: ag
+    container_name: ag-testnet
     restart: unless-stopped
     volumes:
       - ./postgres-socket:/var/run/postgresql
@@ -155,63 +151,6 @@ services:
     logging: *default-logging
 
 
-######################################################################################
-#####################          NGINX PROXY CONTAINER           #######################
-######################################################################################
-
-
-
-  nginx-proxy:
-    image: jwilder/nginx-proxy
-    container_name: nginx-proxy
-    depends_on:
-      - indexer-service
-    #environment:
-    #  PROMETHEUS_HOST: ${PROMETHEUS_HOST}
-    #  HTTP_AUTH_LOGIN: ${HTTP_AUTH_USER}
-    #  HTTP_AUTH_PASSWORD: ${HTTP_AUTH_PASSWORD}
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - nginx_certs:/etc/nginx/certs
-      - nginx_vhost:/etc/nginx/vhost.d
-      - nginx_html:/usr/share/nginx/html
-    #  - ./nginx-proxy/htpasswd:/etc/nginx/htpasswd
-      - ./nginx-proxy/nginx.conf:/etc/nginx/nginx.conf:ro
-    networks:
-      - monitor-net
-    restart: unless-stopped
-    logging: *default-logging
-
-
-######################################################################################
-#####################            NGINX SSL CONTAINER           #######################
-######################################################################################
-
-
-  nginx-ssl:
-    image: jrcs/letsencrypt-nginx-proxy-companion
-    container_name: nginx-ssl
-    depends_on:
-      - indexer-service
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - nginx_certs:/etc/nginx/certs
-      - nginx_vhost:/etc/nginx/vhost.d
-      - nginx_html:/usr/share/nginx/html
-      - nginx_acme:/etc/acme.sh
-    #  - ./nginx-proxy/htpasswd:/etc/nginx/htpasswd
-      - ./nginx-proxy/nginx.conf:/etc/nginx/nginx.conf:ro
-    restart: unless-stopped
-    networks:
-      - monitor-net
-    restart: unless-stopped
-    environment:
-      NGINX_PROXY_CONTAINER: nginx-proxy
-      DEFAULT_EMAIL: ${EMAIL}
-    logging: *default-logging
 
 
 
@@ -223,7 +162,7 @@ services:
 
   postgres2:
     image: postgres:13.6
-    container_name: postgres2
+    container_name: postgres2-testnet
     command: ["postgres", "-c", "shared_preload_libraries=pg_stat_statements"]
     restart: unless-stopped
     environment:
@@ -246,7 +185,7 @@ services:
 
   postgres-agora:
     image: postgres:13.6
-    container_name: postgres-agora
+    container_name: postgres-agora-testnet
     command: ["postgres", "-c", "shared_preload_libraries=pg_stat_statements"]
     restart: unless-stopped
     environment:
