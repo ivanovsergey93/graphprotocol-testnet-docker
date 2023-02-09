@@ -42,7 +42,7 @@ services:
 
   indexer-service:
     image: ${INDEXER_SERVICE_VERSION:-ghcr.io/graphprotocol/indexer-service:v0.20.11}
-    container_name: indexer-service
+    container_name: indexer-service-testnet
     depends_on:
       - postgres2
     environment:
