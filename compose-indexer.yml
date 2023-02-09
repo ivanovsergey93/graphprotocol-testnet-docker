@@ -10,13 +10,11 @@ x-logging:
 networks:
   monitor-net:
     driver: bridge
+  net:
+    external: true
 
 volumes:
     postgres2_data: {}
-    nginx_certs: {}
-    nginx_vhost: {}
-    nginx_html: {}
-    nginx_acme: {}
 
 services:
 
@@ -27,7 +25,7 @@ services:
   cli:
     build:
       context: ./cli
-    container_name: cli
+    container_name: cli-testnet
     restart: unless-stopped
     environment:
       GEO_COORDINATES: ${GEO_COORDINATES:-69.42069 69.42069}
@@ -77,6 +75,7 @@ services:
       - 7600
     networks:
       - monitor-net
+      - net
     restart: unless-stopped
     logging: *default-logging
 
@@ -87,7 +86,7 @@ services:
 
   indexer-agent:
     image: ${INDEXER_AGENT_VERSION:-ghcr.io/graphprotocol/indexer-agent:v0.20.11}
-    container_name: indexer-agent
+    container_name: indexer-agent-testnet
     depends_on:
       - postgres2
       #- vector-node
@@ -131,67 +130,6 @@ services:
     logging: *default-logging
 
 
-
-######################################################################################
-#####################          NGINX PROXY CONTAINER           #######################
-######################################################################################
-
-
-
-  nginx-proxy:
-    image: jwilder/nginx-proxy
-    container_name: nginx-proxy
-    depends_on:
-      - indexer-service
-    #environment:
-    #  PROMETHEUS_HOST: ${PROMETHEUS_HOST}
-    #  HTTP_AUTH_LOGIN: ${HTTP_AUTH_USER}
-    #  HTTP_AUTH_PASSWORD: ${HTTP_AUTH_PASSWORD}
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - nginx_certs:/etc/nginx/certs
-      - nginx_vhost:/etc/nginx/vhost.d
-      - nginx_html:/usr/share/nginx/html
-    #  - ./nginx-proxy/htpasswd:/etc/nginx/htpasswd
-      - ./nginx-proxy/nginx.conf:/etc/nginx/nginx.conf:ro
-    networks:
-      - monitor-net
-    restart: unless-stopped
-    logging: *default-logging
-
-
-######################################################################################
-#####################            NGINX SSL CONTAINER           #######################
-######################################################################################
-
-
-  nginx-ssl:
-    image: jrcs/letsencrypt-nginx-proxy-companion
-    container_name: nginx-ssl
-    depends_on:
-      - indexer-service
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - nginx_certs:/etc/nginx/certs
-      - nginx_vhost:/etc/nginx/vhost.d
-      - nginx_html:/usr/share/nginx/html
-      - nginx_acme:/etc/acme.sh
-    #  - ./nginx-proxy/htpasswd:/etc/nginx/htpasswd
-      - ./nginx-proxy/nginx.conf:/etc/nginx/nginx.conf:ro
-    restart: unless-stopped
-    networks:
-      - monitor-net
-    restart: unless-stopped
-    environment:
-      NGINX_PROXY_CONTAINER: nginx-proxy
-      DEFAULT_EMAIL: ${EMAIL}
-    logging: *default-logging
-
-
-
 ######################################################################################
 #####################       POSTGRES AGENT CONTAINER           #######################
 ######################################################################################
@@ -200,7 +138,7 @@ services:
 
   postgres2:
     image: postgres:13.6
-    container_name: postgres2
+    container_name: postgres2-testnet
     command: ["postgres", "-c", "shared_preload_libraries=pg_stat_statements"]
     restart: unless-stopped
     environment:
