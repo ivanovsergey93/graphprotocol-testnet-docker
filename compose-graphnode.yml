@@ -23,7 +23,7 @@ services:
 
   index-node-0:
     image: ${GRAPH_NODE_VERSION:-graphprotocol/graph-node:v0.29.0}
-    container_name: index-node-0-testnet
+    container_name: index-node-0-arbitrum
     depends_on:
       - postgres
     volumes:
@@ -47,6 +47,7 @@ services:
       GRAPH_KILL_IF_UNRESPONSIVE: "true"
       GRAPH_ALLOW_NON_DETERMINISTIC_FULLTEXT_SEARCH: ${FULLTEXT_SEARCH:-true}
       EXPERIMENTAL_SUBGRAPH_VERSION_SWITCHING_MODE: synced
+      ETHEREUM_POLLING_INTERVAL: ${RPC_POLLING_RATE:-500}
     restart: unless-stopped
     expose:
       - 8001
@@ -68,7 +69,7 @@ services:
 
   query-node-0:
     image: ${GRAPH_NODE_VERSION:-graphprotocol/graph-node:v0.29.0}
-    container_name: query-node-0-testnet
+    container_name: query-node-0-arbitrum
     depends_on:
       - postgres
     volumes:
@@ -116,7 +117,7 @@ services:
 
   postgres:
     image: postgres:13.6
-    container_name: postgres-testnet
+    container_name: postgres-arbitrum
     command: ["postgres", "-c", "shared_preload_libraries=pg_stat_statements"]
     restart: unless-stopped
     environment:
@@ -131,3 +132,42 @@ services:
     expose:
       - 5432
     logging: *default-logging
+
+
+######################################################################################
+#####################         TRAEFIK PROXY CONTAINER          #######################
+######################################################################################      
+
+
+  # traefik:
+  #   image: traefik:latest
+  #   container_name: traefik
+  #   restart: always
+  #   expose:
+  #     - "8082"
+  #   ports:
+  #     - "443:443"
+  #     - "80:80"
+  #   command:
+  #     - "--api=true"
+  #     - "--api.insecure=true"
+  #     - "--api.dashboard=true"
+  #     - "--log.level=DEBUG"
+  #     - "--providers.docker=true"
+  #     - "--providers.docker.exposedbydefault=false"
+  #     - "--providers.file.filename=/dynamic_config.yml"
+  #     - "--entrypoints.websecure.address=:443"
+  #     - "--entryPoints.metrics.address=:8082"
+  #     - "--metrics.prometheus.entryPoint=metrics"
+  #     - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+  #     # TESTING
+  #     - "--certificatesresolvers.myresolver.acme.email=$EMAIL"
+  #     - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+  #   volumes:
+  #     - "./traefik/letsencrypt:/letsencrypt"
+  #     - "./traefik/config/dynamic_config.yml:/dynamic_config.yml"
+  #     - "/var/run/docker.sock:/var/run/docker.sock:ro"
+  #   networks:
+  #     - monitor-net
+  #   labels:
+  #     - "traefik.enable=true"

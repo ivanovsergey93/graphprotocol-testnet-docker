@@ -11,12 +11,6 @@ networks:
   monitor-net:
     driver: bridge
 
-volumes:
-    nginx_certs: {}
-    nginx_vhost: {}
-    nginx_html: {}
-    nginx_acme: {}
-
 services:
 
 ######################################################################################
@@ -25,7 +19,7 @@ services:
 
   poifier:
     image: grassets/poifier-client:v2.0.2
-    container_name: poifier-testnet
+    container_name: poifier-arbitrum
     command:
       - '--poifier-server=https://goerli.poifier.io'
       - '--graph-node-status-endpoint=http://index-node-0:8030/graphql'
@@ -43,8 +37,8 @@ services:
 ######################################################################################
 
   indexer-agent-gui:
-    image: ${INDEXER_AGENT_GUI:-ghcr.io/stakemachine/indexer-agent-ui:v0.1.9}
-    container_name: indexer-agent-gui-testnet
+    image: ${INDEXER_AGENT_GUI:-ghcr.io/stakemachine/indexer-agent-ui:v0.1.11}
+    container_name: indexer-agent-gui-arbitrum
     expose:
       - 3000
     environment:
@@ -62,3 +56,9 @@ services:
       - monitor-net
       - net
     logging: *default-logging
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.services.indexer-agent-gui.loadbalancer.server.port=3000"
+    #   - "traefik.http.routers.indexer-agent-gui.entrypoints=websecure"
+    #   - "traefik.http.routers.indexer-agent-gui.tls.certresolver=myresolver"
+    #   - "traefik.http.routers.indexer-agent-gui.rule=Host(`$AGENT_GUI_HOST`)"
