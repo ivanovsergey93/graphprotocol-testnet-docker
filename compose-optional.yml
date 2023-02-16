@@ -51,6 +51,9 @@ services:
       - VIRTUAL_HOST=${AGENT_GUI_HOST}
       - VIRTUAL_PORT=3000
       - LETSENCRYPT_HOST=${AGENT_GUI_HOST}
+      - VIRTUAL_HOST: ${INDEX_HOST}
+      - VIRTUAL_PORT: 7600
+      - LETSENCRYPT_HOST: ${INDEX_HOST}
     restart: unless-stopped
     networks:
       - monitor-net

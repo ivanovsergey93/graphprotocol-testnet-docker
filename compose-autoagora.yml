@@ -55,6 +55,9 @@ services:
       SERVER_DB_USER: ${DB_USER:-graph-node}
       SERVER_DB_PASSWORD: ${DB_PASS:-db-password}
       SERVER_DB_NAME: ${AGENT_DB_NAME:-indexer-agent}
+      VIRTUAL_HOST: ${INDEX_HOST}
+      VIRTUAL_PORT: 7600
+      LETSENCRYPT_HOST: ${INDEX_HOST}
     expose:
       - 7300
       - 7600
@@ -62,12 +65,12 @@ services:
       - monitor-net
     restart: unless-stopped
     logging: *default-logging
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.indexer-service.loadbalancer.server.port=7600"
-      - "traefik.http.routers.indexer-service.entrypoints=websecure"
-      - "traefik.http.routers.indexer-service.tls.certresolver=myresolver"
-      - "traefik.http.routers.indexer-service.rule=Host(`$INDEX_HOST`)"
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.services.indexer-service.loadbalancer.server.port=7600"
+    #   - "traefik.http.routers.indexer-service.entrypoints=websecure"
+    #   - "traefik.http.routers.indexer-service.tls.certresolver=myresolver"
+    #   - "traefik.http.routers.indexer-service.rule=Host(`$INDEX_HOST`)"
 
 
 ######################################################################################
