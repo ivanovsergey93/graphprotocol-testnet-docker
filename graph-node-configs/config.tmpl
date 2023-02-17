@@ -23,6 +23,11 @@ provider = [
   { label = "${CHAIN_2_NAME_2}", url = "${CHAIN_2_RPC_2}", features = ["archive", "traces"] },
 ]
 
+[chains.${CHAIN_3_NAME}]
+shard = "primary"
+provider = [ { label = "${CHAIN_3_NAME}", url = "${CHAIN_3_RPC}", features = ["archive", "traces"] } ]
+
+
 
 [deployment]
 [[deployment.rule]]
