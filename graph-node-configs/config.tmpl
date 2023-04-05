@@ -17,11 +17,7 @@ provider = [ { label = "${CHAIN_1_NAME}", url = "${CHAIN_1_RPC}", features = ["a
 
 [chains.${CHAIN_2_NAME}]
 shard = "primary"
-provider = [
-  { label = "${CHAIN_2_NAME_0}", url = "${CHAIN_2_RPC_0}", features = ["archive", "traces"] },
-  { label = "${CHAIN_2_NAME_1}", url = "${CHAIN_2_RPC_1}", features = ["archive", "traces"] },
-  { label = "${CHAIN_2_NAME_2}", url = "${CHAIN_2_RPC_2}", features = ["archive", "traces"] },
-]
+provider = [ { label = "${CHAIN_2_NAME_0}", url = "${CHAIN_2_RPC_0}", features = ["archive", "traces"] } ]
 
 [chains.${CHAIN_3_NAME}]
 shard = "primary"
