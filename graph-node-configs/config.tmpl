@@ -7,22 +7,6 @@ pool_size = 10
 [chains]
 ingestor = "index_node_0"
 
-[chains.${CHAIN_0_NAME}]
-shard = "primary"
-provider = [ { label = "${CHAIN_0_NAME}", url = "${CHAIN_0_RPC}", features = ["archive", "traces"] } ]
-
-[chains.${CHAIN_1_NAME}]
-shard = "primary"
-provider = [ { label = "${CHAIN_1_NAME}", url = "${CHAIN_1_RPC}", features = ["archive", "traces"] } ]
-
-[chains.${CHAIN_2_NAME}]
-shard = "primary"
-provider = [ { label = "${CHAIN_2_NAME_0}", url = "${CHAIN_2_RPC_0}", features = ["archive", "traces"] } ]
-
-[chains.${CHAIN_3_NAME}]
-shard = "primary"
-provider = [ { label = "${CHAIN_3_NAME}", url = "${CHAIN_3_RPC}", features = ["archive", "traces"] } ]
-
 [chains.${CHAIN_4_NAME}]
 shard = "primary"
 provider = [ { label = "${CHAIN_4_NAME}", url = "${CHAIN_4_RPC}", features = ["archive", "traces"] } ]
