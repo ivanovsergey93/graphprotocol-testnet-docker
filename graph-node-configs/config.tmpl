@@ -7,13 +7,13 @@ pool_size = 10
 [chains]
 ingestor = "index_node_0"
 
-[chains.${CHAIN_4_NAME}]
+[chains.mainnet]
 shard = "primary"
-provider = [ { label = "${CHAIN_4_NAME}", url = "${CHAIN_4_RPC}", features = ["archive", "traces"] } ]
-
-[chains.${CHAIN_5_NAME}]
-shard = "primary"
-provider = [ { label = "${CHAIN_5_NAME}", url = "${CHAIN_5_RPC}", features = ["archive", "traces"] } ]
+protocol = "ethereum"
+provider = [
+    { label = "archive", url = "$ETHEREUM_ARCHIVE_RPC", features = [ "archive" ] },
+    { label = "substreams", details = { type = "substreams", url = "$FIREHOSE_ENDPOINT" }},
+]
 
 [chains.${CHAIN_6_NAME}]
 shard = "primary"
