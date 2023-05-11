@@ -11,8 +11,9 @@ ingestor = "index_node_0"
 shard = "primary"
 protocol = "ethereum"
 provider = [
-    { label = "archive", url = "$ETHEREUM_ARCHIVE_RPC", features = [ "archive" ] },
-    { label = "substreams", details = { type = "substreams", url = "$FIREHOSE_ENDPOINT" }},
+    { label = "firehose", details = { type = "firehose", url = "${FIREHOSE_ENDPOINT}" } },
+    { label = "substreams", details = { type = "substreams", url = "${FIREHOSE_ENDPOINT}", features = ["compression", "filters"], conn_pool_size = 100 } },
+    { label = "peering", url = "$ETHEREUM_ARCHIVE_RPC", features = ["archive", "traces"] }
 ]
 
 [chains.${CHAIN_6_NAME}]
